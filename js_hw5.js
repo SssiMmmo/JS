@@ -30,3 +30,25 @@ console.log(services.price());
 //console.log(services);
 
 
+services.minPrice = function minimum() {
+    let price = 100000000;
+    for (let key in services) {
+        if (typeof services[key] === 'string') {
+            //console.log(parseInt(services[key]) + ': ' + price)
+            if (parseInt(services[key]) < price){
+                price = parseInt(services[key]);
+            }
+        }
+        else if (typeof services[key] === 'number') {
+            //console.log(parseInt(services[key]) + ': ' + price)
+            if (parseInt(services[key]) < price){
+                price = parseInt(services[key]);
+            }
+        }
+    }
+    return price + " грн";
+}
+
+services["Підстригання вусів"] = "50 грн"
+
+console.log(services.minPrice());
