@@ -22,7 +22,9 @@ services.price = function total() {
 console.log(services.price())
 
 services['Розбити скло'] = "200 грн";
+services["Підстригти нігті"] = "450 грн";
 services['Манікюр'] = 300;
+services["Подратися с барбером"] = 1300
 services['Алкогольні напої'] = null;
 
 console.log(services.price());
@@ -34,13 +36,13 @@ services.minPrice = function minimum() {
     let price = 100000000;
     for (let key in services) {
         if (typeof services[key] === 'string') {
-            //console.log(parseInt(services[key]) + ': ' + price)
+            //console.log(parseInt(services[key]) + ': ' + price);
             if (parseInt(services[key]) < price){
                 price = parseInt(services[key]);
             }
         }
         else if (typeof services[key] === 'number') {
-            //console.log(parseInt(services[key]) + ': ' + price)
+            //console.log(parseInt(services[key]) + ': ' + price);
             if (parseInt(services[key]) < price){
                 price = parseInt(services[key]);
             }
@@ -52,3 +54,24 @@ services.minPrice = function minimum() {
 services["Підстригання вусів"] = "50 грн"
 
 console.log(services.minPrice());
+
+services.maxPrice = function maximum() {
+    let price = 0;
+    for (let key in services){
+        if (typeof services[key] === "string") {
+            //console.log(parseInt(services[key]) + ': ' + price);
+            if (parseInt(services[key]) > price){
+                price = parseInt(services[key]);
+            }
+        }
+        else if (typeof services[key] === "number") {
+            //console.log(parseInt(services[key]) + ': ' + price);
+            if (parseInt(services[key]) > price) {
+                price = parseInt(services[key]);
+            }
+        }
+    }
+    return price + " грн";
+}
+
+console.log(services.maxPrice());
