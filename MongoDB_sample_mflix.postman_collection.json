@@ -1,0 +1,180 @@
+{
+	"info": {
+		"_postman_id": "54e09f07-45a2-4899-a31e-688cfe7cb8ab",
+		"name": "MongoDB_sample_mflix",
+		"description": "Колекція запитів до локального Node.js API, який працює з MongoDB Atlas (sample_mflix.movies)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "40981301"
+	},
+	"item": [
+		{
+			"name": "all_films",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:3000/api/movies"
+			},
+			"response": []
+		},
+		{
+			"name": "film_by_name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Every film has name 'Matrix'\", () => {\r",
+							"  const data = pm.response.json();\r",
+							"  pm.expect(data).to.be.an(\"array\").that.is.not.empty;\r",
+							"\r",
+							"  data.forEach(movie => {\r",
+							"    pm.expect(movie).to.have.property(\"title\");\r",
+							"    pm.expect(movie.title.toLowerCase()).to.include(\"matrix\");\r",
+							"  });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/movies/search/query?title=Matrix",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"movies",
+						"search",
+						"query"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "Matrix"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "new_film",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let filmId = pm.response.json()._id;\r",
+							"console.log(filmId);    \r",
+							"pm.environment.set(\"movie_id\", filmId);\r",
+							"\r",
+							"pm.test(\"ID is valid ObjectId (24 characters)\", () => {\r",
+							"  const id = pm.response.json()._id;\r",
+							"  pm.expect(id).to.match(/^[a-f\\d]{24}$/i);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Title, year, runtime and other are present\", () => {\r",
+							"  const body = pm.response.json();\r",
+							"  pm.expect(body).to.have.all.keys(\"_id\", \"title\", \"year\", \"runtime\" , \"genres\", \"cast\", \"directors\", \"countries\", \"createdAt\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"The Matrix Reloaded\",\n  \"year\": 2003,\n  \"genres\": [\n    \"Action\",\n    \"Sci-Fi\"\n  ],\n  \"runtime\": 138,\n  \"cast\": [\n    \"Keanu Reeves\",\n    \"Laurence Fishburne\"\n  ],\n  \"directors\": [\n    \"Lana Wachowski\",\n    \"Lilly Wachowski\"\n  ],\n  \"countries\": [\n    \"USA\"\n  ]\n}"
+				},
+				"url": "http://localhost:3000/api/movies"
+			},
+			"response": []
+		},
+		{
+			"name": "update_film",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Added updatedAt field\", () => {\r",
+							"  const updated = pm.response.json().updatedAt;\r",
+							"  pm.expect(new Date(updated)).to.be.a(\"date\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Runtime is updated\", () => {\r",
+							"  const runtime = pm.response.json().runtime; \r",
+							"  pm.expect(runtime).to.eql(129);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"The Matrix Revolutions\",\n  \"year\": 2003,\n  \"runtime\": 129\n}"
+				},
+				"url": "http://localhost:3000/api/movies/{{movie_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "delete_film",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Message about delete is displayed\", () => {\r",
+							"  const message = pm.response.json().message;\r",
+							"  pm.expect(message).to.include(\"Документ видалено\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:3000/api/movies/{{movie_id}}"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "movie_id",
+			"value": "REPLACE_WITH_VALID_ID"
+		}
+	]
+}
